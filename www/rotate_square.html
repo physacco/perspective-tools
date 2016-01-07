@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>旋转正方形</title>
+  <style>
+  input {
+    width: 100px;
+  }
+  textarea {
+    width: 600px;
+    height: 100px;
+    background-color: #efefef;
+  }
+  p {
+    line-height: 2em;
+  }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <p>
+      <img src="images/rotate_square.png"><br>
+      切分比例 r：<input type="text" id="in-r">（e.g. 0.5, 1/6）<br>
+      <button id="calc-ang">求α↓</button>
+      <button id="calc-r">求r↑</button><br>
+      角度 α：<input type="text" id="in-ang"><br>
+    </p>
+  </div>
+  <script>
+(function () {
+    var inLen, inSeg, inRatios, output, btnSplit,
+        radians, degrees, calcR, calcAng;
+
+    inR = document.querySelector("#in-r");
+    inAng = document.querySelector("#in-ang");
+    btnCalcAng = document.querySelector("#calc-ang");
+    btnCalcR = document.querySelector("#calc-r");
+
+    radians = function (deg) {
+        return deg * Math.PI / 180;
+    };
+
+    degrees = function (rad) {
+        return rad * 180 / Math.PI;
+    };
+
+    calcR = function () {
+        var r, alpha;
+
+        alpha = eval(inAng.value);
+        r =  1 / (Math.tan(radians(alpha)) + 1);
+        inR.value = r;
+    };
+
+    calcAng = function (r) {
+        var r, alpha;
+
+        r = eval(inR.value);
+        alpha = degrees(Math.atan2(((1 - r) / r), 1));
+        inAng.value = alpha;
+    };
+
+    // add event listeners
+    inR.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            calcAng();
+        }
+    });
+
+    inAng.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            calcR();
+        }
+    });
+
+    btnCalcAng.addEventListener("click", calcAng);
+    btnCalcR.addEventListener("click", calcR);
+}());
+  </script>
+</body>
+</html>

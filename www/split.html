@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>切分线段</title>
+  <style>
+  input {
+    width: 100px;
+  }
+  textarea {
+    width: 600px;
+    height: 100px;
+    background-color: #efefef;
+  }
+  p {
+    line-height: 2em;
+  }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <p>
+      线段的长度：<input type="text" id="length"><br>
+      分成几段：<input type="text" id="segments">（可选）<br>
+      各段的比例：<br>
+      <textarea id="ratios"></textarea><br>
+      <button id="split">切分</button><br>
+      <textarea id="output"></textarea><br>
+    </p>
+  </div>
+  <script>
+(function () {
+    var inLen, inSeg, inRatios, output, btnSplit,
+        getNumbers, splitLength, action;
+
+    inLen = document.querySelector("#length");
+    inSeg = document.querySelector("#segments");
+    inRatios = document.querySelector("#ratios");
+    output = document.querySelector("#output");
+    btnSplit = document.querySelector("#split");
+
+    getNumbers = function (data) {
+        var i, parts, numbers;
+
+        numbers = [];
+        parts = data.split(",");
+        for (i = 0; i < parts.length; i += 1) {
+            numbers.push(parseFloat(parts[i]));
+        }
+
+        return numbers;
+    };
+
+    splitLength = function (length, ratios) {
+        var i, numbers;
+
+        numbers = [];
+        for (i = 0; i < ratios.length; i += 1) {
+            numbers.push(length * ratios[i]);
+        }
+
+        return numbers;
+    };
+
+    action = function () {
+        var i, sum, length, segments, ratios, numbers;
+
+        length = parseFloat(inLen.value);
+        if (isNaN(length)) {
+            alert("请输入 线段的长度！");
+            return;
+        }
+
+        segments = parseFloat(inSeg.value);
+
+        ratios = inRatios.value.replace(/\s+/g, "");
+        if (ratios !== "") {
+            ratios = getNumbers(ratios);
+        } else {
+            ratios = [];
+        }
+
+        if (ratios.length === 0) {
+            if (isNaN(segments)) {
+                alert("请输入 分成几段 或 各段的比例！");
+                return;
+            }
+
+            if (segments === 0) {
+                alert("不能分成0段，请重新输入！");
+                return;
+            }
+
+            for (i = 1; i <= segments; i += 1) {
+                ratios.push(i / segments);
+            }
+        } else {
+            sum = 0;
+            for (i = 0; i < ratios.length; i += 1) {
+                sum += ratios[i];
+            }
+
+            for (i = 1; i < ratios.length; i += 1) {
+                ratios[i] += ratios[i - 1];
+            }
+
+            for (i = 0; i < ratios.length; i += 1) {
+                ratios[i] /= sum;
+            }
+        }
+
+        numbers = splitLength(length, ratios);
+        output.value = numbers.join(", ");
+    }
+
+    // add event listeners
+    inLen.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    inSeg.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    btnSplit.addEventListener("click", action);
+}());
+  </script>
+</body>
+</html>

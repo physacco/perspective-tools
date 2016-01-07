@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>透视缩短</title>
+  <style>
+  input {
+    width: 100px;
+  }
+  textarea {
+    width: 600px;
+    height: 100px;
+    background-color: #efefef;
+  }
+  p {
+    line-height: 2em;
+  }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <p>
+      <img src="images/foreshortening.png"><br>
+      线段的长度：<input type="text" id="in-length"><br>
+      线段起点的深度：<input type="text" id="in-depth">
+      新的深度：<input type="text" id="in-depth1">（到视点的真实距离）<br>
+      <button id="calc1">计算新的长度↓</button>
+      <button id="calc2">计算新的深度↑</button><br>
+      新的长度：<input type="text" id="out-length">
+      缩短了多少：<input type="text" id="out-length1"><br>
+    </p>
+  </div>
+  <script>
+(function () {
+    var inLen, inDepth, inDepth1, outLen, outLen1, btnCalc1, btnCalc2,
+        action1, action2;
+
+    inLen = document.querySelector("#in-length");
+    inDepth = document.querySelector("#in-depth");
+    inDepth1 = document.querySelector("#in-depth1");
+    outLen = document.querySelector("#out-length");
+    outLen1 = document.querySelector("#out-length1");
+    btnCalc1 = document.querySelector("#calc1");
+    btnCalc2 = document.querySelector("#calc2");
+
+    action1 = function () {
+        var length, depth, depth1, out_length, out_length1;
+
+        length = parseFloat(inLen.value);
+        if (isNaN(length)) {
+            alert("请输入 线段的长度！");
+            return;
+        }
+
+        depth = parseFloat(inDepth.value);
+        if (isNaN(depth)) {
+            alert("请输入 线段起点的深度！");
+            return;
+        }
+
+        depth1 = parseFloat(inDepth1.value);
+        if (isNaN(depth1)) {
+            alert("请输入 新的长度！");
+            return;
+        }
+
+        out_length = length * depth / depth1;
+        out_length1 = length - out_length;
+
+        outLen.value = out_length;
+        outLen1.value = out_length1;
+    };
+
+    action2 = function () {
+        var length, depth, depth1, out_length, out_length1;
+
+        length = parseFloat(inLen.value);
+        if (isNaN(length)) {
+            alert("请输入 线段的长度！");
+            return;
+        }
+
+        depth = parseFloat(inDepth.value);
+        if (isNaN(depth)) {
+            alert("请输入 线段起点的深度！");
+            return;
+        }
+
+        out_length = parseFloat(outLen.value);
+        out_length1 = parseFloat(outLen1.value);
+        if (isNaN(out_length) && isNaN(out_length1)) {
+            alert("请输入 新的长度 或 缩短了多少！");
+            return;
+        }
+
+        if (isNaN(out_length)) {
+            out_length = length - out_length1;
+            outLen.value = out_length;
+        } else {
+            out_length1 = length - out_length;
+            outLen1.value = out_length1;
+        }
+
+        depth1 = depth * length / out_length;
+        inDepth1.value = depth1;
+    };
+
+    // add event listeners
+    inLen.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action1();
+        }
+    });
+
+    inDepth.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action1();
+        }
+    });
+
+    inDepth1.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action1();
+        }
+    });
+
+    outLen.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action2();
+        }
+    });
+
+    outLen1.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            outLen.value = "";
+            action2();
+        }
+    });
+
+    btnCalc1.addEventListener("click", action1);
+    btnCalc2.addEventListener("click", action2);
+}());
+  </script>
+</body>
+</html>
+

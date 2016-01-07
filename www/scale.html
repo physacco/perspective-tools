@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>等比例缩放</title>
+  <style>
+  input {
+    width: 100px;
+  }
+  textarea {
+    width: 600px;
+    height: 100px;
+    background-color: #efefef;
+  }
+  p {
+    line-height: 2em;
+  }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <p>
+      输入一组长度，从小到大依次排列，用英文逗号分隔：<br>
+      <textarea id="input"></textarea><br>
+      新的最大长度：<input type="text" id="maximum">
+      缩放比例：<input type="text" id="ratio">（二选一）<br>
+      <button id="scale">缩放</button><br>
+      <textarea id="output"></textarea><br>
+    </p>
+  </div>
+  <script>
+(function () {
+    var input, inMax, inRatio, output, btnScale,
+        getNumbers, scaleNumbers, action;
+
+    input = document.querySelector("#input");
+    inMax = document.querySelector("#maximum");
+    inRatio = document.querySelector("#ratio");
+    output = document.querySelector("#output");
+    btnScale = document.querySelector("#scale");
+
+    getNumbers = function (data) {
+        var i, parts, numbers;
+
+        numbers = [];
+        parts = data.split(",");
+        for (i = 0; i < parts.length; i += 1) {
+            numbers.push(parseFloat(parts[i]));
+        }
+
+        return numbers;
+    };
+
+    scaleNumbers = function (nums, ratio) {
+        var i, numbers;
+
+        numbers = [];
+        for (i = 0; i < nums.length; i += 1) {
+            numbers.push(nums[i] * ratio);
+        }
+
+        return numbers;
+    };
+
+    action = function () {
+        var rawdata, numbers, oldmax, maximum, ratio;
+
+        rawdata = input.value.replace(/\s+/g, "");
+        if (rawdata === "") {
+            alert("请输入要缩放的数据！");
+            return;
+        }
+
+        numbers = getNumbers(rawdata);
+        if (numbers.length === 0) {
+            alert("输入的数据有误，请重新输入！");
+            return;
+        }
+
+        oldmax = numbers[numbers.length - 1];
+        if (oldmax === 0) {
+            alert("输入的最后一个数字不能为0，请重新输入！");
+            return;
+        }
+
+        maximum = parseFloat(inMax.value);
+        ratio = parseFloat(inRatio.value);
+        if (isNaN(maximum) && isNaN(ratio)) {
+            alert("请输入 新的最大长度 或 缩放比例！");
+            return;
+        }
+
+        if (!isNaN(maximum)) {
+            ratio = maximum / oldmax;
+        }
+
+        numbers = scaleNumbers(numbers, ratio);
+        output.value = numbers.join(", ");
+    }
+
+    // add event listeners
+    inMax.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    inRatio.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    btnScale.addEventListener("click", action);
+}());
+  </script>
+</body>
+</html>

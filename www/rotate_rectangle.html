@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>旋转长方形</title>
+  <style>
+  input {
+    width: 100px;
+  }
+  textarea {
+    width: 600px;
+    height: 100px;
+    background-color: #efefef;
+  }
+  p {
+    line-height: 2em;
+  }
+  th, td {
+    min-width: 50px;
+  }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <p>
+      <img src="images/rotate_rectangle.png"><br>
+      z0: <input type="text" id="in-z0" value="0">
+      a: <input type="text" id="in-a">
+      b: <input type="text" id="in-b">
+      α: <input type="text" id="in-ang"><br>
+      <button id="calc">计算</button>
+      <table border="1">
+        <tbody>
+          <tr>
+            <th></th>
+            <th>x</th>
+            <th>z</th>
+          </tr>
+          <tr>
+            <th>A</th>
+            <td>0</td>
+            <td id="az"></td>
+          </tr>
+          <tr>
+            <th>B</th>
+            <td id="bx"></td>
+            <td id="bz"></td>
+          </tr>
+          <tr>
+            <th>C</th>
+            <td id="cx"></td>
+            <td id="cz"></td>
+          </tr>
+          <tr>
+            <th>D</th>
+            <td id="dx"></td>
+            <td id="dz"></td>
+          </tr>
+        </tbody>
+      </table>
+      包围框的长度: <input type="text" id="in-bw" readonly="readonly">
+      宽度: <input type="text" id="in-bh" readonly="readonly">
+    </p>
+  </div>
+  <script>
+(function () {
+    var inZ0, inA, inB, inAng, btnCalc, inBW, inBH,
+        radians, degrees, fmt, action;
+
+    inZ0 = document.querySelector("#in-z0");
+    inA = document.querySelector("#in-a");
+    inB = document.querySelector("#in-b");
+    inAng = document.querySelector("#in-ang");
+    btnCalc = document.querySelector("#calc");
+    inBW = document.querySelector("#in-bw");
+    inBH = document.querySelector("#in-bh");
+
+    radians = function (deg) {
+        return deg * Math.PI / 180;
+    };
+
+    degrees = function (rad) {
+        return rad * 180 / Math.PI;
+    };
+
+    fmt = function (num) {
+        var str = num.toFixed(3);
+        return str.replace(/\.?0+$/, "");
+    };
+
+    action = function () {
+        var z0, a, b, alpha, cos, sin;
+
+        z0 = parseFloat(inZ0.value);
+        if (isNaN(z0)) {
+            alert("请输入 z0！");
+            return;
+        }
+
+        a = parseFloat(inA.value);
+        if (isNaN(a)) {
+            alert("请输入 a！");
+            return;
+        }
+
+        if (a < 1e-6) {
+            alert("a 太小了，请重新输入！");
+            return;
+        }
+
+        b = parseFloat(inB.value);
+        if (isNaN(b)) {
+            alert("请输入 b！");
+            return;
+        }
+
+        if (b < 1e-6) {
+            alert("b 太小了，请重新输入！");
+            return;
+        }
+
+        alpha = parseFloat(inAng.value);
+        if (isNaN(alpha)) {
+            alert("请输入 α！");
+            return;
+        }
+
+        if (!(0 < alpha && alpha < 90)) {
+            alert("不满足 0 < α < 90，请重新输入！");
+            return;
+        }
+
+        cos = Math.cos(radians(alpha));
+        sin = Math.sin(radians(alpha));
+
+        document.querySelector("#az").innerHTML = fmt(z0);
+
+        document.querySelector("#bx").innerHTML = fmt(a * cos);
+        document.querySelector("#bz").innerHTML = fmt(z0 + a * sin);
+
+        document.querySelector("#cx").innerHTML = fmt(a * cos - b * sin);
+        document.querySelector("#cz").innerHTML = fmt(z0 + a * sin + b * cos);
+
+        document.querySelector("#dx").innerHTML = fmt(-b * sin);
+        document.querySelector("#dz").innerHTML = fmt(z0 + b * cos);
+
+        inBW.value = fmt(a * cos + b * sin);
+        inBH.value = fmt(a * sin + b * cos);
+    };
+
+    // add event listeners
+    inZ0.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    inA.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    inB.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    inAng.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    btnCalc.addEventListener("click", action);
+}());
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>视角与画面大小</title>
+  <style>
+  input {
+    width: 100px;
+  }
+  textarea {
+    width: 600px;
+    height: 100px;
+    background-color: #efefef;
+  }
+  .section {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    line-height: 2em;
+  }
+  .note {
+    font-size: 0.8em;
+    color: #999;
+  }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <div>
+      <img src="images/viewing_angle.png"><br>
+    </div>
+    <div class="section">
+      d: <input type="text" id="in-dist" value="1.0">
+      α: <input type="text" id="in-angle">
+      <button id="calc-1">←计算alpha</button>
+      <button id="calc-2">计算L→</button>
+      L: <input type="text" id="in-length">
+      <span id="length-note" class="note"></span><br>
+      <strong>视角α</strong>一般不能大于60°；60°为正常视域，90°为视距圈。<br>
+      <strong>画面大小L</strong>可以用作画面对角线的长度、或者画面较长边的长度。<br>
+      假设L是画面对角线的长度，输入画面比例（Aspect）:
+      <input type="text" id="in-width" placeholder="width"> :
+      <input type="text" id="in-height" placeholder="height"><br>
+      <button id="calc-3">计算画面尺寸</button>
+      Width: <input type="text" id="out-width" readonly="readonly">
+      Height: <input type="text" id="out-height" readonly="readonly"><br>
+      <span id="size-note" class="note"></span><br>
+    </div>
+  </div>
+  <script>
+(function () {
+    var inDist, inAngle, inLength, inWidth, inHeight, outWidth, outHeight,
+        outLenNote, outSizeNote, btnCalc1, btnCalc2, btnCalc3,
+        radians, degrees, action1, action2, action3;
+
+    inDist = document.querySelector("#in-dist");
+    inAngle = document.querySelector("#in-angle");
+    inLength = document.querySelector("#in-length");
+    inWidth = document.querySelector("#in-width");
+    inHeight = document.querySelector("#in-height");
+    outWidth = document.querySelector("#out-width");
+    outHeight = document.querySelector("#out-height");
+    outLenNote = document.querySelector("#length-note");
+    outSizeNote = document.querySelector("#size-note");
+    btnCalc1 = document.querySelector("#calc-1");
+    btnCalc2 = document.querySelector("#calc-2");
+    btnCalc3 = document.querySelector("#calc-3");
+
+    radians = function (deg) {
+        return deg * Math.PI / 180;
+    };
+
+    degrees = function (rad) {
+        return rad * 180 / Math.PI;
+    };
+
+    action1 = function () {
+        var dist, angle, length;
+
+        dist = parseFloat(inDist.value);
+        if (isNaN(dist) || dist < 1e-6) {
+            alert("请输入正确的 d！");
+            return;
+        }
+
+        length = parseFloat(inLength.value);
+        if (isNaN(length)) {
+            alert("请输入正确的 L！");
+            return;
+        }
+
+        angle = 2 * degrees(Math.atan2(length / 2, dist));
+        inAngle.value = angle;
+    };
+
+    action2 = function () {
+        var dist, angle, length;
+
+        dist = parseFloat(inDist.value);
+        if (isNaN(dist) || dist < 1e-6) {
+            alert("请输入正确的 d！");
+            return;
+        }
+
+        angle = parseFloat(inAngle.value);
+        if (isNaN(angle) || angle < 1e-6) {
+            alert("请输入正确的 α！");
+            return;
+        }
+
+        if (angle >= 180) {
+            alert("α不能大于180°，请重新输入！");
+            return;
+        }
+
+        length = 2 * dist * Math.tan(radians(angle / 2));
+        inLength.value = length;
+
+        outLenNote.innerHTML = "1/L = " + (1 / length) + ", L/2 = " + (length / 2);
+    };
+
+    action3 = function () {
+        var length, in_width, in_height, out_width, out_height, segment;
+
+        length = parseFloat(inLength.value);
+        if (isNaN(length)) {
+            alert("请先计算 L，或者输入 L！");
+            return;
+        }
+
+        in_width = parseFloat(inWidth.value);
+        if (isNaN(in_width)) {
+            alert("请输入 Aspect width！");
+            return;
+        }
+
+        in_height = parseFloat(inHeight.value);
+        if (isNaN(in_height)) {
+            alert("请输入 Aspect height！");
+            return;
+        }
+
+        segment = Math.sqrt(in_width * in_width + in_height * in_height);
+        if (segment < 1e-6) {
+            alert("Aspect width, height太小了，请重新输入！");
+            return;
+        }
+
+        out_width = length * in_width / segment;
+        out_height = length * in_height / segment;
+        outWidth.value = out_width;
+        outHeight.value = out_height;
+
+        outSizeNote.innerHTML = "Width/2 = " + (out_width / 2) + ", Height/2 = " + (out_height / 2);
+    };
+
+    // add event listeners
+    inAngle.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action2();
+        }
+    });
+
+    inLength.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action1();
+        }
+    });
+
+    inWidth.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action3();
+        }
+    });
+
+    inHeight.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action3();
+        }
+    });
+
+    btnCalc1.addEventListener("click", action1);
+    btnCalc2.addEventListener("click", action2);
+    btnCalc3.addEventListener("click", action3);
+}());
+  </script>
+</body>
+</html>

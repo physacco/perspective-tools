@@ -1,0 +1,178 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>画面比例</title>
+  <style>
+  input {
+    width: 100px;
+  }
+  textarea {
+    width: 600px;
+    height: 100px;
+    background-color: #efefef;
+  }
+  p {
+    line-height: 2em;
+  }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <p>
+      说明：以下“画面”均指Screen space，“真实”均指View space。<br>
+      画面视距 <strong>D<sub>s</sub></strong>: <input type="text" id="in-Ds">u<sub>s</sub>;
+      真实视距 <strong>D<sub>v</sub></strong>: <input type="text" id="in-Dv">u<sub>v</sub><br>
+      真实深度 <strong>z</strong>: <input type="text" id="in-z">（可选，缺省值为D<sub>v</sub>）<br>
+      <button id="calc-R">计算</button>
+      画面/真实比例 <strong>R<sub>s</sub></strong>: <input type="text" id="in-Rs" readonly="readonly">u<sub>s</sub>/u<sub>v</sub>;
+      真实/画面比例 <strong>R<sub>v</sub></strong>: <input type="text" id="in-Rv" readonly="readonly">u<sub>v</sub>/u<sub>s</sub><br>
+      画面尺寸 <strong>L<sub>s</sub></strong>: <input type="text" id="in-Ls">u<sub>s</sub>
+      <button id="calc-Ls">←</button>
+      <button id="calc-Lv">→</button>
+      真实尺寸 <strong>L<sub>v</sub></strong>: <input type="text" id="in-Lv">u<sub>v</sub>
+    </p>
+  </div>
+  <script>
+(function () {
+    var inDs, inDv, inZ, inRs, inRv, inLs, inLv, btnCalcR, btnCalcLv, btnCalcLs,
+        calcR, calcLv, calcLs;
+
+    inDs = document.querySelector("#in-Ds");
+    inDv = document.querySelector("#in-Dv");
+    inZ = document.querySelector("#in-z");
+    inRs = document.querySelector("#in-Rs");
+    inRv = document.querySelector("#in-Rv");
+    inLs = document.querySelector("#in-Ls");
+    inLv = document.querySelector("#in-Lv");
+    btnCalcR = document.querySelector("#calc-R");
+    btnCalcLv = document.querySelector("#calc-Lv");
+    btnCalcLs = document.querySelector("#calc-Ls");
+
+    calcR = function () {
+        var Ds, Dv, z, Rs, Rv;
+
+        Ds = parseFloat(inDs.value);
+        if (isNaN(Ds)) {
+            alert("请输入 画面视距！");
+            return;
+        }
+
+        Dv = parseFloat(inDv.value);
+        if (isNaN(Dv)) {
+            alert("请输入 真实视距！");
+            return;
+        }
+
+        z = parseFloat(inZ.value);
+        if (isNaN(z)) {
+            z = Dv;
+        }
+
+        Rs = Ds / z;
+        Rv = z / Ds;
+
+        inRs.value = Rs;
+        inRv.value = Rv;
+    };
+
+    calcLv = function () {
+        var Ds, Dv, z, Rs, Rv, Ls, Lv;
+
+        Ds = parseFloat(inDs.value);
+        if (isNaN(Ds)) {
+            alert("请输入 画面视距！");
+            return;
+        }
+
+        Dv = parseFloat(inDv.value);
+        if (isNaN(Dv)) {
+            alert("请输入 真实视距！");
+            return;
+        }
+
+        z = parseFloat(inZ.value);
+        if (isNaN(z)) {
+            z = Dv;
+        }
+
+        Ls = parseFloat(inLs.value);
+        if (isNaN(Ls)) {
+            alert("请输入 画面尺寸！");
+            return;
+        }
+
+        Lv = z / Ds * Ls;
+        inLv.value = Lv;
+    };
+
+    calcLs = function () {
+        var Ds, Dv, z, Rs, Rv, Ls, Lv;
+
+        Ds = parseFloat(inDs.value);
+        if (isNaN(Ds)) {
+            alert("请输入 画面视距！");
+            return;
+        }
+
+        Dv = parseFloat(inDv.value);
+        if (isNaN(Dv)) {
+            alert("请输入 真实视距！");
+            return;
+        }
+
+        z = parseFloat(inZ.value);
+        if (isNaN(z)) {
+            z = Dv;
+        }
+
+        Lv = parseFloat(inLv.value);
+        if (isNaN(Lv)) {
+            alert("请输入 真实尺寸！");
+            return;
+        }
+
+        Ls = Ds / z * Lv;
+        inLs.value = Ls;
+    };
+
+    // add event listeners
+    inDs.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            calcR();
+        }
+    });
+
+    inDv.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            calcR();
+        }
+    });
+
+    inZ.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            calcR();
+        }
+    });
+
+    inLs.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            calcLv();
+        }
+    });
+
+    inLv.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            calcLs();
+        }
+    });
+
+    btnCalcR.addEventListener("click", calcR);
+    btnCalcLv.addEventListener("click", calcLv);
+    btnCalcLs.addEventListener("click", calcLs);
+}());
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>三点解圆弧</title>
+  <style>
+  input {
+    width: 100px;
+  }
+  textarea {
+    width: 600px;
+    height: 100px;
+    background-color: #efefef;
+  }
+  .section {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    line-height: 2em;
+  }
+  .note {
+    font-size: 0.8em;
+    color: #999;
+  }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <div>
+      <img src="images/resolve_circular_arc.png"><br>
+    </div>
+    <div class="section">
+      已知ABC为圆弧，D是AC中点，BD⊥AC，则圆心O一定在BD直线上。<br>
+      a: <input type="text" id="in-a">
+      b: <input type="text" id="in-b">
+      <button id="calc-1">计算</button>
+      r: <input type="text" id="in-r" readonly="readonly">
+    </div>
+    <div class="section">
+      已知AC上任意点F，DF = f，计算点F的“弧高”EF：<br>
+      f: <input type="text" id="in-f">
+      <button id="calc-2">计算</button>
+      EF: <input type="text" id="in-h" readonly="readonly">
+    </div>
+  </div>
+  <script>
+(function () {
+    var inA, inB, inR, inF, inH, btnCalc1, btnCalc2,
+        radians, degrees, action1, action2;
+
+    inA = document.querySelector("#in-a");
+    inB = document.querySelector("#in-b");
+    inR = document.querySelector("#in-r");
+    inF = document.querySelector("#in-f");
+    inH = document.querySelector("#in-h");
+    btnCalc1 = document.querySelector("#calc-1");
+    btnCalc2 = document.querySelector("#calc-2");
+
+    radians = function (deg) {
+        return deg * Math.PI / 180;
+    };
+
+    degrees = function (rad) {
+        return rad * 180 / Math.PI;
+    };
+
+    action1 = function () {
+        var a, b, r;
+
+        a = parseFloat(inA.value);
+        if (isNaN(a)) {
+            alert("请输入正确的 a！");
+            return;
+        }
+
+        b = parseFloat(inB.value);
+        if (isNaN(b) || b <= 0) {
+            alert("请输入正确的 b！");
+            return;
+        }
+
+        r = (a * a + b * b) / (2 * b);
+        inR.value = r;
+    };
+
+    action2 = function () {
+        var a, b, r, f, h, alpha, tan_alpha;
+
+        a = parseFloat(inA.value);
+        if (isNaN(a)) {
+            alert("请输入正确的 a！");
+            return;
+        }
+
+        b = parseFloat(inB.value);
+        if (isNaN(b) || b <= 0) {
+            alert("请输入正确的 b！");
+            return;
+        }
+
+        r = parseFloat(inR.value);
+        if (isNaN(r) || r <= 0) {
+            alert("请先计算 r 或者输入 r！");
+            return;
+        }
+
+        f = parseFloat(inF.value);
+        if (isNaN(f) || f < 0 || f > a) {
+            alert("请输入正确的 f！");
+            return;
+        }
+
+        if (f === 0) {
+            h = b;
+        } else if (f === a) {
+            h = 0
+        } else {
+            alpha = Math.asin(f / r);
+            console.log('alpha:', degrees(alpha));
+
+            tan_alpha = Math.tan(alpha);
+            h = (f - (r - b) * tan_alpha) / tan_alpha;
+        }
+
+        inH.value = h;
+    };
+
+    // add event listeners
+    inA.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action1();
+        }
+    });
+
+    inB.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action1();
+        }
+    });
+
+    inF.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action2();
+        }
+    });
+
+    btnCalc1.addEventListener("click", action1);
+    btnCalc2.addEventListener("click", action2);
+}());
+  </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>任意点的透视</title>
+  <style>
+  input {
+    width: 100px;
+  }
+  textarea {
+    width: 600px;
+    height: 100px;
+    background-color: #efefef;
+  }
+  p {
+    line-height: 2em;
+  }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <p>
+      假定<strong>心点</strong>(CV点)既是View space的原点，又是Screen space的原点。<br>
+      View space采用真实世界的测量单位，例如：米；Screen space采用画面上的测量单位，例如：厘米、毫米。<br>
+      视距(View space): <input type="text" id="in-dv">
+      视距(Screen space): <input type="text" id="in-ds"><br>
+      点坐标(View space) x: <input type="text" id="in-xv">
+      y: <input type="text" id="in-yv">
+      z: <input type="text" id="in-zv"><br>
+      <button id="calc">计算</button><br>
+      点坐标(Screen space) x: <input type="text" id="out-xs" readonly="readonly">
+      y: <input type="text" id="out-ys" readonly="readonly"><br>
+    </p>
+  </div>
+  <script>
+(function () {
+    var inDV, inDS, inXV, inYV, inZV, outXS, outYS, btnCalc, action;
+
+    inDV = document.querySelector("#in-dv");
+    inDS = document.querySelector("#in-ds");
+    inXV = document.querySelector("#in-xv");
+    inYV = document.querySelector("#in-yv");
+    inZV = document.querySelector("#in-zv");
+    outXS = document.querySelector("#out-xs");
+    outYS = document.querySelector("#out-ys");
+    btnCalc = document.querySelector("#calc");
+
+    action = function () {
+        var dv, ds, xv, yv, zv, ratio, xs, ys;
+
+        dv = parseFloat(inDV.value);
+        ds = parseFloat(inDS.value);
+        xv = parseFloat(inXV.value);
+        yv = parseFloat(inYV.value);
+        zv = parseFloat(inZV.value);
+        if (isNaN(dv) || isNaN(ds) || isNaN(xv) || isNaN(yv) || isNaN(zv)) {
+            alert("输入数据不完整或存在错误，请重新输入！");
+            return;
+        }
+
+        if (dv <= 0 || ds <= 0) {
+            alert("视距必须大于0，请重新输入！");
+            return;
+        }
+
+        if (zv > 0) {
+            alert("点坐标(View space) z不能大于0，请重新输入！");
+            return;
+        }
+
+        ratio = ds / (dv - zv);
+        xs = xv * ratio;
+        ys = yv * ratio;
+
+        outXS.value = xs;
+        outYS.value = ys;
+    };
+
+    // add event listeners
+    inDV.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    inDS.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    inXV.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    inYV.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    inZV.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    btnCalc.addEventListener("click", action);
+}());
+  </script>
+</body>
+</html>
+

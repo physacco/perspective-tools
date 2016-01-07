@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>任意直线的灭点</title>
+  <style>
+  input {
+    width: 100px;
+  }
+  textarea {
+    width: 600px;
+    height: 100px;
+    background-color: #efefef;
+  }
+  p {
+    line-height: 2em;
+  }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <p>
+      假定<strong>心点</strong>(CV点)既是View space的原点，又是Screen space的原点。<br>
+      View space采用真实世界的测量单位，例如：米；Screen space采用画面上的测量单位，例如：厘米、毫米。<br>
+      视距(View space): <input type="text" id="in-dv">
+      视距(Screen space): <input type="text" id="in-ds"><br>
+      点1的坐标(View space) x: <input type="text" id="in-x1">
+      y: <input type="text" id="in-y1">
+      z: <input type="text" id="in-z1"><br>
+      点2的坐标(View space) x: <input type="text" id="in-x2">
+      y: <input type="text" id="in-y2">
+      z: <input type="text" id="in-z2"><br>
+      <button id="calc">计算</button><br>
+      分类：<select id="line-type" name="line_type">
+        <option value="0">Unknown</option>
+        <option value="1">水平原线</option>
+        <option value="2">直立原线</option>
+        <option value="3">倾斜原线</option>
+        <option value="4">90°水平变线</option>
+        <option value="5">45°水平变线</option>
+        <option value="6">余角水平变线</option>
+        <option value="7">上斜变线</option>
+        <option value="8">下斜变线</option>
+      </select><br>
+      灭点的坐标(Screen space) x: <input type="text" id="in-vp-x">
+      y: <input type="text" id="in-vp-y">
+    </p>
+  </div>
+  <script>
+(function () {
+    var inLen, inSeg, inRatios, output, btnSplit,
+        getNumbers, splitLength, action;
+
+    inLen = document.querySelector("#length");
+    inSeg = document.querySelector("#segments");
+    inRatios = document.querySelector("#ratios");
+    output = document.querySelector("#output");
+    btnSplit = document.querySelector("#split");
+
+    getNumbers = function (data) {
+        var i, parts, numbers;
+
+        numbers = [];
+        parts = data.split(",");
+        for (i = 0; i < parts.length; i += 1) {
+            numbers.push(parseFloat(parts[i]));
+        }
+
+        return numbers;
+    };
+
+    splitLength = function (length, ratios) {
+        var i, numbers;
+
+        numbers = [];
+        for (i = 0; i < ratios.length; i += 1) {
+            numbers.push(length * ratios[i]);
+        }
+
+        return numbers;
+    };
+
+    action = function () {
+        var i, sum, length, segments, ratios, numbers;
+
+        length = parseFloat(inLen.value);
+        if (isNaN(length)) {
+            alert("请输入 线段的长度！");
+            return;
+        }
+
+        segments = parseFloat(inSeg.value);
+
+        ratios = inRatios.value.replace(/\s+/g, "");
+        if (ratios !== "") {
+            ratios = getNumbers(ratios);
+        } else {
+            ratios = [];
+        }
+
+        if (ratios.length === 0) {
+            if (isNaN(segments)) {
+                alert("请输入 分成几段 或 各段的比例！");
+                return;
+            }
+
+            if (segments === 0) {
+                alert("不能分成0段，请重新输入！");
+                return;
+            }
+
+            for (i = 1; i <= segments; i += 1) {
+                ratios.push(i / segments);
+            }
+        } else {
+            sum = 0;
+            for (i = 0; i < ratios.length; i += 1) {
+                sum += ratios[i];
+            }
+
+            for (i = 1; i < ratios.length; i += 1) {
+                ratios[i] += ratios[i - 1];
+            }
+
+            for (i = 0; i < ratios.length; i += 1) {
+                ratios[i] /= sum;
+            }
+        }
+
+        numbers = splitLength(length, ratios);
+        output.value = numbers.join(", ");
+    }
+
+    // add event listeners
+    inLen.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    inSeg.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action();
+        }
+    });
+
+    btnSplit.addEventListener("click", action);
+}());
+  </script>
+</body>
+</html>
+

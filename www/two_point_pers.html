@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>两点透视</title>
+  <style>
+  input {
+    width: 100px;
+  }
+  textarea {
+    width: 600px;
+    height: 100px;
+    background-color: #efefef;
+  }
+  p {
+    line-height: 2em;
+  }
+  td {
+    min-width: 100px;
+  }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <p>
+      两点透视<br>
+      <img src="images/two-point-pers.png"><br>
+      视距 d: <input type="text" id="inD">
+      旋转角度 α: <input type="text" id="inAng">
+      <button id="calc">计算灭点和测点</button><br>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>VP1</th>
+            <th>M2</th>
+            <th>CV</th>
+            <th>M1</th>
+            <th>VP2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="outVP1"></td>
+            <td id="outM2"></td>
+            <td>0</td>
+            <td id="outM1"></td>
+            <td id="outVP2"></td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p>
+      透视点坐标 x: <input type="text" id="inX">
+      y: <input type="text" id="inY">
+      <button id="calc-lines">计算灭线角度</button><br>
+      角度1：<span id="outAlpha"></span><br>
+      角度2：<span id="outBeta"></span>
+    </p>
+  </div>
+  <script>
+(function () {
+    var inD, inAng, outVP1, outM2, outM1, outVP2, btnCalc,
+        inX, intY, outAlpha, outBeta, btnCalcLines,
+        radians, degrees, action1, action2;
+
+    inD = document.querySelector("#inD");
+    inAng = document.querySelector("#inAng");
+    outVP1 = document.querySelector("#outVP1");
+    outM2 = document.querySelector("#outM2");
+    outM1 = document.querySelector("#outM1");
+    outVP2 = document.querySelector("#outVP2");
+    btnCalc = document.querySelector("#calc");
+    inX = document.querySelector("#inX");
+    inY = document.querySelector("#inY");
+    outAlpha = document.querySelector("#outAlpha");
+    outBeta = document.querySelector("#outBeta");
+    btnCalcLines = document.querySelector("#calc-lines");
+
+    radians = function (ang) {
+        return ang * Math.PI / 180;
+    };
+
+    degrees = function (rad) {
+        return rad / Math.PI * 180;
+    };
+
+    action1 = function () {
+        var d, ang, vp1, vp2, m1, m2;
+
+        d = parseFloat(inD.value);
+        ang = parseFloat(inAng.value);
+        if (isNaN(d) || isNaN(ang)) {
+            alert("请输入 d 和 α！");
+            return;
+        }
+
+        ang = radians(ang);
+        vp1 = -d / Math.tan(ang);
+        vp2 = d * Math.tan(ang);
+        m1 = d / Math.sin(ang) + vp1;
+        m2 = -d / Math.cos(ang) + vp2;
+
+        outVP1.innerHTML = vp1;
+        outM2.innerHTML = m2;
+        outM1.innerHTML = m1;
+        outVP2.innerHTML = vp2;
+    };
+
+    action2 = function () {
+        var x, y, vp1, vp2, alpha, beta;
+
+        x = parseFloat(inX.value);
+        y = parseFloat(inY.value);
+        if (isNaN(x) || isNaN(y)) {
+            alert("请输入 x 和 y！");
+            return;
+        }
+
+        vp1 = parseFloat(outVP1.innerHTML);
+        vp2 = parseFloat(outVP2.innerHTML);
+        if (isNaN(vp1) || isNaN(vp2)) {
+            alert("请先计算灭点和测点！");
+            return;
+        }
+
+        alpha = degrees(Math.atan2(y, x - vp1));
+        beta = degrees(Math.atan2(y, vp2 - x));
+
+        outAlpha.innerHTML = alpha;
+        outBeta.innerHTML = beta;
+    };
+
+    // add event listeners
+    inD.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action1();
+        }
+    });
+
+    inAng.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action1();
+        }
+    });
+
+    inX.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action2();
+        }
+    });
+
+    inY.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            action2();
+        }
+    });
+
+    btnCalc.addEventListener("click", action1);
+    btnCalcLines.addEventListener("click", action2);
+}());
+  </script>
+</body>
+</html>
+

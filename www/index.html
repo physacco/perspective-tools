@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Perspective Tools</title>
+  <style>
+  iframe {
+    border: none;
+    width: 100%;
+    height: 100%;
+  }
+  #sidebar {
+    float: left;
+    width: 196px;
+  }
+  #main {
+    margin: 0 0 0 200px;
+    height: 600px;
+  }
+  .clear {
+    clear: both;
+  }
+  h1 {
+    font-size: 1.5em;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+  li.iframe-link {
+    margin: 4px;
+    padding: 4px;
+    list-style: none;
+    background: #ccc;
+  }
+  li.iframe-link.active {
+      color: red;
+  }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>Perspective Tools</h1>
+  </div>
+  <div id="body">
+    <div id="sidebar">
+      <ul>
+        <li class="iframe-link active" target="split.html">切分线段</li>
+        <li class="iframe-link" target="scale.html">等比例缩放</li>
+        <li class="iframe-link" target="foreshortening.html">透视缩短</li>
+        <li class="iframe-link" target="proportions.html">画面比例</li>
+        <li class="iframe-link" target="two_point_pers.html">两点透视</li>
+        <li class="iframe-link" target="mp_method.html">测点法</li>
+        <li class="iframe-link" target="reverse_mp_method.html">反向测点法</li>
+        <li class="iframe-link" target="split_pers_line.html">平行线等分法</li>
+        <li class="iframe-link" target="rotate_square.html">旋转正方形</li>
+        <li class="iframe-link" target="rotate_rectangle.html">旋转长方形</li>
+        <li class="iframe-link" target="point_projection.html">任意点的透视</li>
+        <li class="iframe-link" target="vp_of_a_line.html">任意直线的灭点 TODO</li>
+        <li class="iframe-link" target="viewing_angle.html">视角与画面大小</li>
+        <li class="iframe-link" target="resolve_triangle.html">解三角形</li>
+        <li class="iframe-link" target="resolve_circular_arc.html">三点解圆弧</li>
+      </ul>
+    </div>
+    <div id="main">
+      <iframe id="page" src="scale.html"></iframe>
+    </div>
+    <div class="clear"></div>
+  </div>
+  <script>
+var iframeLinks = document.querySelectorAll(".iframe-link");
+Array.prototype.forEach.call(iframeLinks, function (link) {
+    link.addEventListener("click", function () {
+        Array.prototype.forEach.call(iframeLinks, function (item) {
+            item.classList.remove("active");
+        });
+        this.classList.add("active");
+        document.querySelector("#page").setAttribute("src", this.getAttribute("target"));
+    });
+});
+iframeLinks[0].click();
+  </script>
+</body>
+</html>
